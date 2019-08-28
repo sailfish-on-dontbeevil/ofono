@@ -93,9 +93,9 @@ autoreconf --force --install
     --enable-sailfish-pushforwarder \
     --enable-sailfish-rilmodem \
     --enable-sailfish-access \
+    --enable-qmimodem \
     --disable-add-remove-context \
     --disable-isimodem \
-    --disable-qmimodem \
     --with-systemdunitdir="/%{_lib}/systemd/system"
 
 make %{_smp_mflags}
