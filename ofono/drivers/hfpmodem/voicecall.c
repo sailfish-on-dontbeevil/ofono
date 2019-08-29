@@ -128,7 +128,7 @@ static struct ofono_call *create_call(struct ofono_voicecall *vc, int type,
 		call->phone_number.type = num_type;
 	}
 
-	d->calls = g_slist_insert_sorted(d->calls, call, at_util_call_compare);
+	d->calls = g_slist_insert_sorted(d->calls, call, ofono_call_compare);
 
 	call->clip_validity = clip;
 
