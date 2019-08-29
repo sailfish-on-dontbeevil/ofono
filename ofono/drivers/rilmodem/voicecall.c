@@ -117,20 +117,6 @@ done:
 	ofono_voicecall_disconnected(vc, reqdata->id, reason, NULL);
 }
 
-static int call_compare(gconstpointer a, gconstpointer b)
-{
-	const struct ofono_call *ca = a;
-	const struct ofono_call *cb = b;
-
-	if (ca->id < cb->id)
-		return -1;
-
-	if (ca->id > cb->id)
-		return 1;
-
-	return 0;
-}
-
 static void clcc_poll_cb(struct ril_msg *message, gpointer user_data)
 {
 	struct ofono_voicecall *vc = user_data;
@@ -209,7 +195,7 @@ static void clcc_poll_cb(struct ril_msg *message, gpointer user_data)
 			call->id, call->status, call->type,
 			call->phone_number.number, call->name);
 
-		calls = g_slist_insert_sorted(calls, call, call_compare);
+		calls = g_slist_insert_sorted(calls, call, ofono_call_compare);
 	}
 
 no_calls:
