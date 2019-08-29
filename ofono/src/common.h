@@ -189,3 +189,4 @@ const char *call_status_to_string(enum call_status status);
 gint ofono_call_compare(gconstpointer a, gconstpointer b);
 gint ofono_call_compare_by_status(gconstpointer a, gconstpointer b);
 gint ofono_call_compare_by_id(gconstpointer a, gconstpointer b);
+const char *ofono_call_status_to_string(enum call_status status);
