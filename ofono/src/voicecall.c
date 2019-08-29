@@ -415,7 +415,7 @@ static void append_voicecall_properties(struct voicecall *v,
 	ofono_bool_t mpty;
 	dbus_bool_t emergency_call;
 
-	status = call_status_to_string(call->status);
+	status = ofono_call_status_to_string(call->status);
 
 	ofono_dbus_dict_append(dict, "State", DBUS_TYPE_STRING, &status);
 
@@ -938,7 +938,7 @@ static void voicecall_set_call_status(struct voicecall *call, int status)
 
 	call->call->status = status;
 
-	status_str = call_status_to_string(status);
+	status_str = ofono_call_status_to_string(status);
 	path = voicecall_build_path(call->vc, call->call);
 
 	ofono_dbus_signal_property_changed(conn, path,
@@ -1577,7 +1577,7 @@ static void filter_hangup(struct voicecall *v)
 	}
 
 	ofono_warn("Couldn't disconnect %s call %d",
-		call_status_to_string(call->status), call->id);
+		ofono_call_status_to_string(call->status), call->id);
 }
 
 static void filter_dial_check_cb(enum ofono_voicecall_filter_dial_result result,
@@ -1587,10 +1587,10 @@ static void filter_dial_check_cb(enum ofono_voicecall_filter_dial_result result,
 
 	if (result == OFONO_VOICECALL_FILTER_DIAL_CONTINUE) {
 		DBG("No need to release %s call %d",
-			call_status_to_string(v->call->status), v->call->id);
+			ofono_call_status_to_string(v->call->status), v->call->id);
 	} else {
 		DBG("Need to release %s call %d",
-			call_status_to_string(v->call->status), v->call->id);
+			ofono_call_status_to_string(v->call->status), v->call->id);
 		filter_hangup(v);
 	}
 }
@@ -1602,10 +1602,10 @@ static void filter_incoming_check_cb
 
 	if (result == OFONO_VOICECALL_FILTER_INCOMING_CONTINUE) {
 		DBG("No need to release %s call %d",
-			call_status_to_string(v->call->status), v->call->id);
+			ofono_call_status_to_string(v->call->status), v->call->id);
 	} else {
 		DBG("Need to release %s call %d",
-			call_status_to_string(v->call->status), v->call->id);
+			ofono_call_status_to_string(v->call->status), v->call->id);
 		filter_hangup(v);
 	}
 }
@@ -2610,7 +2610,7 @@ void ofono_voicecall_notify(struct ofono_voicecall *vc,
 
 	DBG("Got a voicecall event, status: %s (%d), id: %u, number: %s"
 			" called_number: %s, called_name %s",
-			call_status_to_string(call->status),
+			ofono_call_status_to_string(call->status),
 			call->status, call->id, call->phone_number.number,
 			call->called_number.number, call->name);
 
