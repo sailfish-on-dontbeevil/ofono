@@ -26,7 +26,7 @@ pkginclude_HEADERS = include/log.h include/plugin.h include/history.h \
 			include/sms-filter.h include/gprs-filter.h \
 			include/voicecall-filter.h include/dbus-access.h \
 			include/ril-constants.h include/ril-transport.h \
-			include/netmon.h include/lte.h \
+			include/netmon.h include/lte.h include/call-list.h \
 			include/storage.h include/watch.h \
 			gdbus/gdbus.h
 
@@ -747,7 +747,7 @@ src_ofonod_SOURCES = $(builtin_sources) $(gatchat_sources) src/ofono.ver \
 			src/dbus-queue.c src/dbus-access.c \
 			src/voicecall-filter.c src/ril-transport.c \
 			src/hfp.h src/siri.c src/watchlist.c \
-			src/netmon.c src/lte.c \
+			src/netmon.c src/lte.c src/call-list.c \
 			src/netmonagent.c src/netmonagent.h
 
 src_ofonod_LDADD = gdbus/libgdbus-internal.la $(builtin_libadd) \
@@ -1045,7 +1045,8 @@ unit_tests += unit/test-rilmodem-cs \
 				unit/test-rilmodem-cs \
 				unit/test-rilmodem-sms \
 				unit/test-rilmodem-cb \
-				unit/test-rilmodem-gprs
+				unit/test-rilmodem-gprs \
+				unit/test-call-list
 
 endif
 endif
@@ -1097,6 +1098,24 @@ unit_test_sms_root_SOURCES = unit/test-sms-root.c \
 unit_test_sms_root_CFLAGS = -DSTORAGEDIR='"/tmp/ofono"' $(COVERAGE_OPT) $(AM_CFLAGS)
 unit_test_sms_root_LDADD = @GLIB_LIBS@
 unit_objects += $(unit_test_sms_root_OBJECTS)
+
+unit_test_call_list_SOURCES = \
+				     src/common.c src/util.c src/log.c \
+				     src/call-list.c unit/test-call-list.c
+unit_test_call_list_LDADD = @GLIB_LIBS@ -ldl
+unit_objects += $(unit_test_call_list_OBJECTS)
+
+unit_test_call_list_SOURCES = \
+				     src/common.c src/util.c src/log.c \
+				     src/call-list.c unit/test-call-list.c
+unit_test_call_list_LDADD = @GLIB_LIBS@ -ldl
+unit_objects += $(unit_test_call_list_OBJECTS)
+
+unit_test_call_list_SOURCES = \
+				     src/common.c src/util.c src/log.c \
+				     src/call-list.c unit/test-call-list.c
+unit_test_call_list_LDADD = @GLIB_LIBS@ -ldl
+unit_objects += $(unit_test_call_list_OBJECTS)
 
 unit_test_mux_SOURCES = unit/test-mux.c $(gatchat_sources)
 unit_test_mux_LDADD = @GLIB_LIBS@
