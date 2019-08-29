@@ -1,8 +1,0 @@
---- src/common.h
-+++ src/common.h
-@@ -184,3 +184,5 @@ const char *registration_tech_to_string(int tech);
- const char *packet_bearer_to_string(int bearer);
- 
- gboolean is_valid_apn(const char *apn);
-+
-+gint ofono_call_compare(gconstpointer a, gconstpointer b);
