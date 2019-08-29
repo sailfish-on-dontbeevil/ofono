@@ -1,5 +1,5 @@
 # ofono
-Ofono fork with QMI modem support for the PinePhone.
+`ofono` fork with QMI modem support for the PinePhone.
 
 This fork enable QMI modem support in the Sailfish OS fork of `ofono` (https://git.sailfishos.org/mer-core/ofono), by default it's disabled in the `.spec` file.
 Also several patches are applied to make voicecalls possible with the QMI modem of the PinePhone.
