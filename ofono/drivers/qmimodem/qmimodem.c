@@ -23,16 +23,23 @@
 #include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #define OFONO_API_SUBJECT_TO_CHANGE
 #include <ofono/plugin.h>
 
 #include "qmimodem.h"
+#include <plugins/qmiextvoice.h>
 
 static int qmimodem_init(void)
 {
 	qmi_devinfo_init();
 	qmi_netreg_init();
-	qmi_voicecall_init();
+	if (getenv("OFONO_QMI_EXTVOICE")) {
+		qmiext_voicecall_init();
+	} else {
+		qmi_voicecall_init();
+	}
 	qmi_sim_legacy_init();
 	qmi_sim_init();
 	qmi_sms_init();
@@ -59,7 +66,11 @@ static void qmimodem_exit(void)
 	qmi_sms_exit();
 	qmi_sim_exit();
 	qmi_sim_legacy_exit();
-	qmi_voicecall_exit();
+	if (getenv("OFONO_QMI_EXTVOICE")) {
+		qmiext_voicecall_exit();
+	} else {
+		qmi_voicecall_exit();
+	}
 	qmi_netreg_exit();
 	qmi_devinfo_exit();
 }

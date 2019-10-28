@@ -93,7 +93,7 @@ autoreconf --force --install
     --enable-sailfish-access \
     --disable-add-remove-context \
     --disable-isimodem \
-    --disable-qmimodem \
+    --enable-qmimodem \
     --with-systemdunitdir=%{_unitdir}
 
 %make_build
