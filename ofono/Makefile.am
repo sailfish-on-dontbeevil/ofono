@@ -313,7 +313,11 @@ builtin_sources += $(qmi_sources) \
 			drivers/qmimodem/netmon.c
 
 builtin_modules += gobi
-builtin_sources += plugins/gobi.c
+builtin_sources += plugins/gobi.c 
+
+builtin_modules += qmimodem
+builtin_sources += plugins/qmiextvoice.c \
+			plugins/qmiextvoice.h
 endif
 
 if ATMODEM

@@ -68,7 +68,11 @@ static int convert_qmi_dcs_gsm_dcs(int qmi_dcs, int *gsm_dcs)
 	case QMI_USSD_DCS_ASCII:
 		*gsm_dcs = USSD_DCS_8BIT;
 		break;
+	case QMI_USSD_DCS_UCS2:
+		*gsm_dcs = USSD_DCS_UCS2;
+		break;
 	default:
+		DBG("gsm_dcs %i", qmi_dcs);
 		return 1;
 	}
 
@@ -107,11 +111,15 @@ static void async_orig_ind(struct qmi_result *result, void *user_data)
 	if (qmi_ussd == NULL)
 		return;
 
-	if (validate_ussd_data(qmi_ussd, len))
+	if (validate_ussd_data(qmi_ussd, len)) {
+		DBG("USSD Unvalidate");
 		goto error;
+	}
 
-	if (convert_qmi_dcs_gsm_dcs(qmi_ussd->dcs, &gsm_dcs))
+	if (convert_qmi_dcs_gsm_dcs(qmi_ussd->dcs, &gsm_dcs)) {
+		DBG("USSD unconverted");
 		goto error;
+	}
 
 	ofono_ussd_notify(ussd, OFONO_USSD_STATUS_NOTIFY, gsm_dcs,
 				qmi_ussd->data, qmi_ussd->length);
