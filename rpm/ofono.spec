@@ -79,7 +79,7 @@ autoreconf --force --install
     --disable-add-remove-context \
     --disable-rilmodem \
     --disable-isimodem \
-    --disable-qmimodem \
+    --enable-qmimodem \
     --with-systemdunitdir=%{_unitdir}
 
 %make_build
