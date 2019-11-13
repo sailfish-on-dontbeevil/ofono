@@ -18,7 +18,7 @@ Requires(post): systemd
 Requires(postun): systemd
 
 # license macro requires reasonably fresh rpm
-BuildRequires:  rpm >= 4.11
+BuildRequires:  rpm
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(dbus-glib-1)
 BuildRequires:  pkgconfig(glib-2.0)
@@ -131,7 +131,6 @@ systemctl daemon-reload ||:
 
 %files
 %defattr(-,root,root,-)
-%license COPYING
 %config %{_sysconfdir}/dbus-1/system.d/*.conf
 %{_sbindir}/*
 /%{_lib}/systemd/system/network.target.wants/ofono.service
