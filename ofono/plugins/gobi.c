@@ -69,6 +69,7 @@
 #define GOBI_WDA	(1 << 10)
 
 static struct sailfish_slot_driver_reg *slot_gobi_driver_reg = NULL;
+static char *imei = "123456789012345";
 
 struct gobi_data {
 	struct qmi_device *device;
@@ -83,6 +84,26 @@ static void gobi_debug(const char *str, void *user_data)
 	const char *prefix = user_data;
 
 	ofono_info("%s%s", prefix, str);
+}
+
+/*IMEI CALLBACK*/
+static void gobi_get_ids_cb(struct qmi_result *result, void *user_data)
+{
+	char *str;
+	struct cb_data *cbd = user_data;
+	ofono_devinfo_query_cb_t cb = cbd->cb;
+
+	str = qmi_result_get_string(result, QMI_DMS_RESULT_ESN);
+	if (!str || strcmp(str, "0") == 0) {
+		str = qmi_result_get_string(result, QMI_DMS_RESULT_IMEI);
+		if (!str) {
+			CALLBACK_WITH_FAILURE(cb, NULL, cbd->data);
+			return;
+		} else {
+			ofono_info("Got IMEI %s", str);
+			imei = str;
+		}
+    }
 }
 
 static int gobi_probe(struct ofono_modem *modem)
@@ -250,7 +271,10 @@ static void create_dms_cb(struct qmi_service *service, void *user_data)
 		goto error;
 
 	data->dms = qmi_service_ref(service);
-
+	/*Get modem IMEI*/
+    qmi_service_send(data->dms, QMI_DMS_GET_IDS, NULL,
+                     gobi_get_ids_cb, modem, NULL);
+	
 	if (qmi_service_send(data->dms, QMI_DMS_GET_CAPS, NULL,
 					get_caps_cb, modem, NULL) > 0)
 		return;
@@ -613,8 +637,7 @@ static guint slot_gobi_plugin_start(slot_gobi_plugin *plugin)
 	
 	plugin->slots = g_slist_insert(plugin->slots, slot, 0);
 
-//TODO test data
-	slot->imei = "123456789012345";
+	slot->imei = imei;
 	
 	slot->handle = sailfish_manager_slot_add(plugin->handle, slot,
 				"/quectelqmi_0", (OFONO_RADIO_ACCESS_MODE_GSM | OFONO_RADIO_ACCESS_MODE_UMTS | OFONO_RADIO_ACCESS_MODE_LTE),
