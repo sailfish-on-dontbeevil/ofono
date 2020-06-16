@@ -374,7 +374,7 @@ void qmiext_at_util_call_list_notify(struct ofono_voicecall *vc,
 	    ofono_voicecall_disconnected(
 			vc,
 			old_call->id,
-			OFONO_DISCONNECT_REASON_UNKNOWN,
+			OFONO_DISCONNECT_REASON_LOCAL_HANGUP,
 			NULL);
 	    old_calls = old_calls->next;
 	} else if (new_call &&
