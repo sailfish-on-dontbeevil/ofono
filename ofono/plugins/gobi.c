@@ -69,7 +69,6 @@
 #define GOBI_WDA	(1 << 10)
 
 static struct sailfish_slot_driver_reg *slot_gobi_driver_reg = NULL;
-static char *imei = "123456789012345";
 
 struct gobi_data {
 	struct qmi_device *device;
@@ -78,6 +77,40 @@ struct gobi_data {
 	unsigned int discover_attempts;
 	uint8_t oper_mode;
 };
+
+typedef struct sailfish_slot_manager_impl {
+	struct sailfish_slot_manager *handle;
+	guint start_timeout_id;
+	GSList *slots;
+} slot_gobi_plugin;
+
+typedef struct sailfish_slot_impl {
+	struct sailfish_slot *handle;
+	struct ofono_watch *watch;
+	struct ofono_modem *modem;
+	slot_gobi_plugin *plugin;
+	gulong sim_watch_id;
+	gulong uicc_event_id;
+	gboolean sim_inserted;
+	char *path;
+	char *usbdev;
+	char *manufacturer;
+	char *model;
+	char *revision;
+	char *imei;
+	int port_speed;
+	int frame_size;
+	guint disconnect_id;
+	GIOChannel *channel;
+	GHashTable *options;
+	guint start_timeout;
+	guint start_timeout_id;
+	guint retry_init_id;
+	guint setup_id;
+} slot_gobi_slot;
+
+
+slot_gobi_slot *sslot = NULL;
 
 static void gobi_debug(const char *str, void *user_data)
 {
@@ -101,7 +134,17 @@ static void gobi_get_ids_cb(struct qmi_result *result, void *user_data)
 			return;
 		} else {
 			ofono_info("Got IMEI %s", str);
-			imei = str;
+			slot_gobi_plugin *plugin = sslot->plugin;
+
+			sslot->imei = str;
+
+			sslot->handle = sailfish_manager_slot_add(plugin->handle, 
+											 sslot,
+											 "/quectelqmi_0", 
+											 (OFONO_RADIO_ACCESS_MODE_GSM | OFONO_RADIO_ACCESS_MODE_UMTS | OFONO_RADIO_ACCESS_MODE_LTE),
+											 sslot->imei, 
+											 "00", 
+											 SAILFISH_SIM_STATE_PRESENT);
 		}
     }
 }
@@ -560,37 +603,6 @@ static void gobi_post_online(struct ofono_modem *modem)
 
 /* sailfish_slot_driver callbacks */
 
-typedef struct sailfish_slot_manager_impl {
-	struct sailfish_slot_manager *handle;
-	guint start_timeout_id;
-	GSList *slots;
-} slot_gobi_plugin;
-
-typedef struct sailfish_slot_impl {
-	struct sailfish_slot *handle;
-	struct ofono_watch *watch;
-	struct ofono_modem *modem;
-	slot_gobi_plugin *plugin;
-	gulong sim_watch_id;
-	gulong uicc_event_id;
-	gboolean sim_inserted;
-	char *path;
-	char *usbdev;
-	char *manufacturer;
-	char *model;
-	char *revision;
-	char *imei;
-	int port_speed;
-	int frame_size;
-	guint disconnect_id;
-	GIOChannel *channel;
-	GHashTable *options;
-	guint start_timeout;
-	guint start_timeout_id;
-	guint retry_init_id;
-	guint setup_id;
-} slot_gobi_slot;
-
 
 static slot_gobi_plugin *slot_gobi_plugin_create(struct sailfish_slot_manager *m)
 {
@@ -633,18 +645,18 @@ static void slot_gobi_slot_enabled_changed(slot_gobi_slot *slot)
 
 static guint slot_gobi_plugin_start(slot_gobi_plugin *plugin)
 {
-	slot_gobi_slot *slot = g_new0(slot_gobi_slot, 1);
+	sslot = g_new0(slot_gobi_slot, 1);
 	
-	plugin->slots = g_slist_insert(plugin->slots, slot, 0);
+	plugin->slots = g_slist_insert(plugin->slots, sslot, 0);
 
-	slot->imei = imei;
+/*	slot->imei = imei;
 	
 	slot->handle = sailfish_manager_slot_add(plugin->handle, slot,
 				"/quectelqmi_0", (OFONO_RADIO_ACCESS_MODE_GSM | OFONO_RADIO_ACCESS_MODE_UMTS | OFONO_RADIO_ACCESS_MODE_LTE),
-				slot->imei, "00", SAILFISH_SIM_STATE_PRESENT);
-	
+				slot->imei, "00", SAILFISH_SIM_STATE_PRESENT);*/
+
 //	slot_gobi_slot_enabled_changed(slot);
-		
+
 	return 0;
 }
 
