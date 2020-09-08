@@ -400,7 +400,7 @@ struct sailfish_slot *sailfish_manager_slot_add2
 	 * there are USB modems which can appear (and disappear) pretty
 	 * much at any time. This has to be dealt with somehow at some
 	 * point but for now let's leave it as is. */
-	if (path && m && !m->started && !sailfish_manager_foreach_slot
+	if (path && m /*&& !m->started*/ && !sailfish_manager_foreach_slot
 				(m->plugin, sailfish_manager_check_slot_name,
 							(char*)path)) {
 		char *enabled_slots;
