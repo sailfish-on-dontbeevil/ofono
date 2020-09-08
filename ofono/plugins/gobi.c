@@ -110,7 +110,8 @@ typedef struct sailfish_slot_impl {
 } slot_gobi_slot;
 
 
-slot_gobi_slot *sslot = NULL;
+static slot_gobi_slot *sslot = NULL;
+static slot_gobi_plugin *sslot_plugin = NULL;
 
 static void gobi_debug(const char *str, void *user_data)
 {
@@ -135,7 +136,7 @@ static void gobi_get_ids_cb(struct qmi_result *result, void *user_data)
 		} else {
 			ofono_info("Got IMEI %s", str);
 			slot_gobi_plugin *plugin = sslot->plugin;
-
+                    
 			sslot->imei = str;
 
 			sslot->handle = sailfish_manager_slot_add(plugin->handle, 
@@ -611,6 +612,12 @@ static slot_gobi_plugin *slot_gobi_plugin_create(struct sailfish_slot_manager *m
 	ofono_info("CREATE SFOS MANAGER PLUGIN");
 	plugin->handle = m;
 
+    sslot_plugin = plugin;
+    
+    if (sslot) {
+        sslot->plugin = plugin;
+    }
+    
 	return plugin;
 	
 }
@@ -647,6 +654,8 @@ static guint slot_gobi_plugin_start(slot_gobi_plugin *plugin)
 {
 	sslot = g_new0(slot_gobi_slot, 1);
 	
+    sslot->plugin = sslot_plugin;
+    
 	plugin->slots = g_slist_insert(plugin->slots, sslot, 0);
 
 /*	slot->imei = imei;
